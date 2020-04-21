@@ -26,3 +26,10 @@ af_extention <- crop(x = af_masked, y = extent(af_shape))
 plot(af_extention)
 
 writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
+
+###### M bam Area
+
+bam_sabiapimenta <- af_extention <= 800.00
+plot(bam_sabiapimenta)
+
+writeRaster(bam_sabiapimenta, "./data/layers/cropped_layers/bam_sabiapimenta_area.tif")
