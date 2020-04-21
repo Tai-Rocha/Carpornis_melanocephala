@@ -12,15 +12,17 @@ library(rgdal)
 
 #### Read Atlantic Forest Shape and altitude raster
 
-af_shape <- readOGR("./data/shape_masc/matlantica.shp")
+af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
 plot(af_shape)
 
 altitude_brasil <- raster("./data/layers/raw_layers/altitude_inpe_br.asc")
 plot(altitude_brasil)
 
-#### Crop for atlantic forest
+#### Mask Crop for atlantic forest
+af_masked <- mask(x = altitude_brasil, mask = af_shape)
+plot(af_masked)
 
-af_extention <- crop (altitude_brasil, af_shape)
+af_extention <- crop(x = af_masked, y = extent(af_shape))
 plot(af_extention)
 
-writeRaster(af_extention, "./data/layers/cropped_layers/af_extention.tif")
+writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
