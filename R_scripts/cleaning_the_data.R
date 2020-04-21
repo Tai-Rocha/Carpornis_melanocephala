@@ -2,8 +2,13 @@
 ## Cleaning georreferenced data for Carpornis melanocephala
 ## Author: Tainá Rocha
 ## Date: 21 April 2020
-## Laste update
+## Laste update: 
 #############################################################
+
+## Library pcgks
+
+library(modleR)
+
 
 ## Read and load georreferenced data
 
@@ -33,7 +38,7 @@ sdmdata_sabiapimenta <- setup_sdmdata(species_name = sabiapimenta_records[1],
                              cv_n = 10,
                              seed = 512,
                              buffer_type = "user",
-                             buffer_shape = alt_masc
+                             buffer_shape = alt_masc,
                              png_sdmdata = TRUE,
                              n_back = 1000,
                              clean_dupl = TRUE,
