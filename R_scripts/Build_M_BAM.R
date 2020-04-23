@@ -5,13 +5,13 @@
 ## Laste update: 22 April 2020
 #############################################################
 
-##### Library pcgks
+### Library pcgks
 
 library(raster)
 library(rgdal)
 library(maptools)
 
-#### Read and load Atlantic Forest Shape and altitude raster
+### Read and load Atlantic Forest Shape and altitude raster
 
 af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
 plot(af_shape)
@@ -19,7 +19,7 @@ plot(af_shape)
 altitude_brasil <- raster("./data/layers/raw_layers/altitude_inpe_br.asc")
 plot(altitude_brasil)
 
-#### Mask Crop for atlantic forest
+### Mask Crop for atlantic forest
 af_masked <- mask(x = altitude_brasil, mask = af_shape)
 plot(af_masked)
 
@@ -28,9 +28,8 @@ plot(af_extention)
 
 writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
 
-#################################################################################
 
-# Defining BAM M Area i.e Area <= 800.000 altitude
+### Defining BAM M Area i.e Area <= 800.000 altitude
 
 bamMtif <- af_extention<800.000
 bamMtif[bamMtif == 0] <- NA
@@ -41,9 +40,8 @@ plot(BAM_M_MASKED)
 
 writeRaster(BAM_M_MASKED, "./data/layers/cropped_layers/bamMsabiaPimenta.tif")
 
-######### Covert M BAM raster to shape
-
-### Defining the function 
+### Convert M BAM raster to shape 
+### Set function (beacuse raster function to do this take a long time (more than 7 hours)!!! Here take 1 minute or less)
 
 gdal_polygonizeR <- function(x, outshape=NULL, gdalformat = 'ESRI Shapefile', 
                              pypath=NULL, readpoly=TRUE, quiet=TRUE) {
