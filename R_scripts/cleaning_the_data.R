@@ -14,9 +14,9 @@ library(modleR)
 
 sabiapimenta_records <- read.csv("./data/c_melanocephala.csv", sep = ",", dec = ".")
 
-## Read and load the .shp file to use as a buffer paramenter (M BAM area)
+## Read and load the pseudoabsence shapefile where pseudoabsence will be generated 
 
-sabiapimenta_masc <- readOGR("./data/shapemasc/alt_masc.shp")
+sabiapimenta_pa_area <- readOGR("./data/shapes/PabsenceArea_shape_sabiaPimenta.shp")
 
 ### Bioclimatic variables from worldclim List and stack rescpectively
 
