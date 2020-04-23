@@ -1,5 +1,5 @@
 #############################################################
-## Prepare buffer area for pseudoabsence and M bam Area
+## Prepare M bam Area from altitude layer
 ## Author: Tainá Rocha
 ## Date: 21 April 2020
 ## Laste update: 22 April 2020
