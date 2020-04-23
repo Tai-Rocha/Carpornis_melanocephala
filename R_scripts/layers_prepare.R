@@ -2,15 +2,16 @@
 ## Prepare buffer area for pseudoabsence and M bam Area
 ## Author: Tainá Rocha
 ## Date: 21 April 2020
-## Laste update: 
+## Laste update: 22 April 2020
 #############################################################
 
 ##### Library pcgks
 
 library(raster)
 library(rgdal)
+library(maptools)
 
-#### Read Atlantic Forest Shape and altitude raster
+#### Read and load Atlantic Forest Shape and altitude raster
 
 af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
 plot(af_shape)
@@ -27,24 +28,57 @@ plot(af_extention)
 
 writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
 
-###### M bam Area ## Verificar a limpeza dos dados q caem em NA
+#################################################################################
 
-bam_sabiapimenta <- af_extention <= 800.00
-plot(bam_sabiapimenta)
+# Defining BAM M Area i.e Area <= 800.000 altitude
 
-values(bam_sabiapimenta)[values(bam_sabiapimenta) == 0] = NA
-plot(bam_sabiapimenta)
+bamMtif <- af_extention<800.000
+bamMtif[bamMtif == 0] <- NA
+plot(bamMtif)
 
-writeRaster(bam_sabiapimenta, "./data/layers/cropped_layers/BAMM_sabiapimenta.tif")
+BAM_M_MASKED <- mask(af_extention, mask = bamMtif)
+plot(BAM_M_MASKED)
 
+writeRaster(BAM_M_MASKED, "./data/layers/cropped_layers/bamMsabiaPimenta.tif")
 
-####### Pseudoabsence # testar
+######### Covert M BAM raster to shape
 
-pseudoabsence_area <- (af_extention > 830.000) & (af_extention < 900.00)
-plot(pseudoabsence_area)
+### Defining the function 
 
-values(pseudoabsence_area)[values(pseudoabsence_area) == 0] = NA
-plot(pseudoabsence_area)
+gdal_polygonizeR <- function(x, outshape=NULL, gdalformat = 'ESRI Shapefile', 
+                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
+  if (isTRUE(readpoly)) require(rgdal)
+  if (is.null(pypath)) {
+    pypath <- Sys.which('gdal_polygonize.py')
+  }
+  if (!file.exists(pypath)) stop("Can't find gdal_polygonize.py on your system.") 
+  owd <- getwd()
+  on.exit(setwd(owd))
+  setwd(dirname(pypath))
+  if (!is.null(outshape)) {
+    outshape <- sub('\\.shp$', '', outshape)
+    f.exists <- file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep='.'))
+    if (any(f.exists)) 
+      stop(sprintf('File already exists: %s', 
+                   toString(paste(outshape, c('shp', 'shx', 'dbf'), 
+                                  sep='.')[f.exists])), call.=FALSE)
+  } else outshape <- tempfile()
+  if (is(x, 'Raster')) {
+    require(raster)
+    writeRaster(x, {f <- tempfile(fileext='.asc')})
+    rastpath <- normalizePath(f)
+  } else if (is.character(x)) {
+    rastpath <- normalizePath(x)
+  } else stop('x must be a file path (character string), or a Raster object.')
+  system2('python', args=(sprintf('"%1$s" "%2$s" -f "%3$s" "%4$s.shp"', 
+                                  pypath, rastpath, gdalformat, outshape)))
+  if (isTRUE(readpoly)) {
+    shp <- readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
+    return(shp) 
+  }
+  return(NULL)
+}
 
-writeRaster(pseudoabsence_area, "./data/layers/cropped_layers/pseudoabsence_area.tif")
+bamM_sabiaPimenta_Shape <- gdal_polygonizeR(BAM_M_MASKED)
 
+writeOGR(bamM_sabiaPimenta_Shape, dsn="./data/layers/cropped_layers/","bamM_sabiapimenta_shape", driver="ESRI Shapefile", overwrite_layer=TRUE)   
