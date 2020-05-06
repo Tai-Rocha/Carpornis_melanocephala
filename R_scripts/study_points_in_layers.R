@@ -56,7 +56,7 @@ g <- ggplot() + geom_polygon(data = area,
 plot(g)
 
 
-##### Read altitude Atlatic Forest cropped raster
+##### Read altitude Atlatic Forest cropped raster (Bio20)
 
 altitude <- raster("./data/layers/cropped_layers/af_cropped_alt.tif")
 plot(altitude)
@@ -110,3 +110,5 @@ plot(Bio15)
 
 bio15_vlaues <- extract(Bio15, long_lat, method="simple", df=T)
 boxplot(bio15_vlaues[,2], col="light blue", main="Bio15")
+
+
