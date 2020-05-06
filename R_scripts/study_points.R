@@ -12,6 +12,7 @@ library(maps)
 library(mapdata)
 library(ggrepel)
 library(ggsn)
+library(rgdal)
 
 ## Read data
 points <- read.csv("./data/c_melanocephala_nova.csv", sep = ",", dec = ".")
@@ -86,3 +87,26 @@ altbr_values_coord <- extract(altitude_brasil, long_lat, method='simple', df=T)
 write.csv(altbr_values_coord, "./data/altbrasil_in_coord.csv")
 
 boxplot(altbr_values_coord[,2], col="light blue", main="Altitude")
+
+
+### Bio4 
+
+Bio4 <- raster("./data/layers/current/bio4.tif")
+plot(Bio4)
+
+bio4_vlaues <- extract(Bio4, long_lat, method="simple", df=T)
+boxplot(bio4_vlaues[,2], col="light blue", main="Bio4")
+
+### Bio12 
+Bio12 <- raster("./data/layers/current/bio12.tif")
+plot(Bio12)
+
+bio12_vlaues <- extract(Bio12, long_lat, method="simple", df=T)
+boxplot(bio12_vlaues[,2], col="light blue", main="Bio12")
+
+### Bio15 
+Bio15 <- raster("./data/layers/current/bio15.tif")
+plot(Bio15)
+
+bio15_vlaues <- extract(Bio15, long_lat, method="simple", df=T)
+boxplot(bio15_vlaues[,2], col="light blue", main="Bio15")
