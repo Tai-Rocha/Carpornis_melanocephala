@@ -1,9 +1,10 @@
-#############################################################
-## Cleaning georreferenced data for Carpornis melanocephala
+###############################################################
+## Cleaning georreferenced data for Carpornis melanocephala and 
+## Buid Bioclim Model For selec pseudoabsence
 ## Author: Tainá Rocha
 ## Date: 21 April 2020
 ## Laste update: 
-############################################################
+##############################################################
 
 ## Library pcgks
 
