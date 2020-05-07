@@ -1,47 +1,41 @@
-#####################
-## dados abioticos ##
+######################
+# Choose Layers 
+#Author: Tainá Rocha
+#Date: 07 May 2020
 #####################
 
-# passo 1 - carregar as bibliotecas
+## Library
 
 library(raster)
 library(rgeos)
 library(rgdal)
-library(scales)
-library(dismo)
-library(maps)
-library(gclus)
-library(clusterSim)
-library(maptools)
-library(ggplot2)
-library(shapefiles)
-require(XML)
-require(maptools)
-require(RColorBrewer)
-require(spdep)
-require(RColorBrewer)
-require(plotrix)
-require(classInt)
 library(corrplot)
-library(stats)
-library(Hmisc)
 library(corrgram)
-library(ROCR)
 
 
-# criar uma janela com a extensao da area de trabalho
-ext <- extent(-57, -35, -34, -3)
 
-# carregar as biovariaveis
-dados <- list.files(path=paste('C:/carpornis/pres', sep=''), pattern='bio', full.names=TRUE )
-pts <- read.csv(file.choose(), header=T)
+pts_cm <- read.csv("./data/c_melanocephala_novo_no_duplicates.csv", sep = ",", dec = ".")
 
-# ver os arquivos
-dados
 
-# agrupar as camadas em um objeto
-wclim <- stack(dados)
-wclim
+### Load, List, Stack 
+dados <- list.files(path=paste('./data/layers/Present_1970_200_version_2.1s', sep=''), pattern='tif', full.names=TRUE)
+stack(dados)
+
+### Crop for atlantic Forest
+# Read AF Shape
+af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
+plot(af_shape)
+
+### Crop
+# Mask Crop for atlantic forest
+af_masked <- mask(x = dados, mask = af_shape)
+plot(af_masked)
+
+af_biovars<- crop(x = af_masked, y = extent(af_shape))
+plot(af_biovars)
+
+writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif", bylayers =TRUE)
+
 # extrair os valores dos pontos nas camadas ambientais
 vals <- extract(wclim, pts)
 summary(vals)
