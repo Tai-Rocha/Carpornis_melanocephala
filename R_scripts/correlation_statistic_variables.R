@@ -12,29 +12,28 @@ library(rgdal)
 library(corrplot)
 library(corrgram)
 
-
-
-pts_cm <- read.csv("./data/c_melanocephala_novo_no_duplicates.csv", sep = ",", dec = ".")
-
-
 ### Load, List, Stack 
-dados <- list.files(path=paste('./data/layers/Present_1970_200_version_2.1s', sep=''), pattern='tif', full.names=TRUE)
-stack(dados)
+dados <- list.files(path = "./data/layers/Present_1970_200_version_2.1", pattern = ".tif", full.names=TRUE)
+biovars <- stack(dados)
 
 ### Crop for atlantic Forest
 # Read AF Shape
-af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
+af_shape <- readOGR("./data/shapes/mata_atlantica11428.shp")
 plot(af_shape)
 
 ### Crop
 # Mask Crop for atlantic forest
-af_masked <- mask(x = dados, mask = af_shape)
+af_masked <- mask(x = biovars, mask = af_shape, na.rm =T, numThreads = 8)
 plot(af_masked)
-
+  
 af_biovars<- crop(x = af_masked, y = extent(af_shape))
 plot(af_biovars)
 
-writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif", bylayers =TRUE)
+#c <- paste0(names(af_biovars@data),"_.tif")
+
+
+#writeRaster(af_biovars, filename= c, bylayers =TRUE, overwrite=TRUE)
+
 
 # extrair os valores dos pontos nas camadas ambientais
 vals <- extract(wclim, pts)
