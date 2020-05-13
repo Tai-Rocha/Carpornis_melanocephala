@@ -45,6 +45,13 @@ values <- raster::extract(biovars, points@coords, method='simple', df=T)
 
 values_in_coord <- extract(biovars, long_lat_raw_unique, method='simple', df=T)
 
+### Gerando a tabela com as valores extraídos
+
+write.table(values, file="1000_random_points.csv", quote=FALSE, sep=',', dec=".")
+
+write.table(values_in_coord, file="411_spcies_points.csv", quote=FALSE, sep=',', dec=".")
+
+
 ######################################## 
 
 #### Aleatórios calcular a os indices de correlacao e niveis de significancia (data.frame)
@@ -54,11 +61,7 @@ corrgram(values[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correl
 corrgram(values_in_coord[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
 
 
-
-
-
-
-##### testar script amanhã a partir daqui !!!!!!!!!!!!!!!!!!!!
+############################# testar script amanhã a partir daqui !!!!!!!!!!!!!!!!!!!!
 
 
 # biovar <- dropLayer(wclim, c('bio1', 'bio2', 'bio3', 'bio4', 'bio5', 'bio6', 'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio12', 'bio13', 'bio14', 'bio15', 'bio16', 'bio17', 'bio18', 'bio19'))
@@ -87,8 +90,7 @@ pred_nf
 
 pontos <- pts
 
-### Gerando a tabela com as valores extra?dos
-write.table(vals, file="vals.csv", quote=FALSE, sep=';', dec=",")
+
 
 ### Matriz de correla??o de pearson - pacote corrplot e leitura da tabela que foi gerada acima
 corrplota <- (read.csv('./vals.csv', sep=";", dec=",", header=TRUE))
