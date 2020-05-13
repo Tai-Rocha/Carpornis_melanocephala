@@ -13,27 +13,8 @@ library(corrplot)
 library(corrgram)
 
 ### Load, List, Stack 
-dados <- list.files(path = "./data/layers/Present_1970_200_version_2.1", pattern = ".tif", full.names=TRUE)
+dados <- list.files(path = "/home/taina/Documentos/Worldclim/Worldclim_AF_version_2.1/", pattern = ".tif", full.names=TRUE)
 biovars <- stack(dados)
-
-### Crop for atlantic Forest
-# Read AF Shape
-af_shape <- readOGR("./data/shapes/mata_atlantica11428.shp")
-plot(af_shape)
-
-### Crop
-# Mask Crop for atlantic forest
-af_masked <- mask(x = biovars, mask = af_shape, na.rm =T, numThreads = 8)
-plot(af_masked)
-  
-af_biovars<- crop(x = af_masked, y = extent(af_shape))
-plot(af_biovars)
-
-#c <- paste0(names(af_biovars@data),"_.tif")
-
-
-#writeRaster(af_biovars, filename= c, bylayers =TRUE, overwrite=TRUE)
-
 
 # extrair os valores dos pontos nas camadas ambientais
 vals <- extract(wclim, pts)
