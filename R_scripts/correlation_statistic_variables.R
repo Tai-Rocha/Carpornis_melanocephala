@@ -41,92 +41,212 @@ long_lat_raw_unique <- rev(pontos_raw_unique[nrow(pontos_raw_unique):1,])
 #### Extrair Valores nos Pontos Aletórios
 values <- raster::extract(biovars, points@coords, method='simple', df=T)
 
+values_final <- values[complete.cases(values), ]
+
 #### Extrair Valores nos Pontos Originais
 
 values_in_coord <- extract(biovars, long_lat_raw_unique, method='simple', df=T)
 
+values_incoord_final <- values_in_coord[complete.cases(values_in_coord), ]
+
 ### Gerando a tabela com as valores extraídos
 
-write.table(values, file="1000_random_points.csv", quote=FALSE, sep=',', dec=".")
+write.table(values_final, file="Random_points.csv", quote=FALSE, sep=',', dec=".")
 
-write.table(values_in_coord, file="411_spcies_points.csv", quote=FALSE, sep=',', dec=".")
+write.table(values_incoord_final, file="spcies_points.csv", quote=FALSE, sep=',', dec=".")
 
 
 ######################################## 
 
 #### Aleatórios calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
+corrgram(values_final[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
 
 #### Pontos Raw calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values_in_coord[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
+corrgram(values_incoord_final[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
 
 
 ############################# testar script amanhã a partir daqui !!!!!!!!!!!!!!!!!!!!
 
-
-# biovar <- dropLayer(wclim, c('bio1', 'bio2', 'bio3', 'bio4', 'bio5', 'bio6', 'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio12', 'bio13', 'bio14', 'bio15', 'bio16', 'bio17', 'bio18', 'bio19'))
-# deletar a linha acima as variaves selecionadas, perceba que apenas as variaveis descartadas devem permanecer na lista
-
-# selecionar as variaveis (bio4, bio12, bio15 e bio20)
-biovar <- dropLayer(wclim, c('bio1', 'bio2', 'bio3', 'bio5', 'bio6', 'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio13', 'bio14', 'bio16', 'bio17', 'bio18', 'bio19'))
-biovar
-plot(biovar)
-
-# criar um raster com as camadas selecionadas (biovar.grd) em algum diretorio
-writeRaster(biovar, filename="biovar.grd", overwrite=T)
-
-# extrair os valores de biovar de cada ponto usado na modelagem
-var <- extract(biovar, pts)
-
-# calcular novamente os indices de correlacao e niveis de significancia (data.frame)
-# rcorr(var)
-corrgram(var, bg='blue', cex=3, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
-
-# criar o stack com as camadas ambientais selecionadas
-pred_nf = stack("biovar.grd")
-
-# verificar as biovariaveis, resolucao, camadas, projecao, etc...
-pred_nf
-
-pontos <- pts
+# selecionar as variaveis (altitude, bio5, bio6, bio12, bio13, bio15)
+biovars_selection <- dropLayer(biovars, c('bio1', 'bio2', 'bio3', 'bio4',  'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio14', 'bio16', 'bio17', 'bio18', 'bio19'))
+biovars_selection
+plot(biovars_selection)
 
 
+# Extrair os valores de biovar_selection de cada ponto usado nos pontos aleatórios
 
-### Matriz de correla??o de pearson - pacote corrplot e leitura da tabela que foi gerada acima
-corrplota <- (read.csv('./vals.csv', sep=";", dec=",", header=TRUE))
-corrplota
-corrplotall <- cor(corrplota)
-corrplot(corrplotall, method="circle", type = 'upper')
-View(corrplotall)
+values_randompoints_selection <- extract(biovars_selection, points@coords, df=T)
 
-write.table(corrplotall, file="corrplotall.csv", quote=FALSE, sep=';', dec=",")
+values_rp_final_selection <- values_randompoints_selection[complete.cases(values_randompoints_selection), ]
+
+
+# Extrair os valores de biovar_selection de cada ponto usado 411 pontos da spceis
+
+values_in_coord_selection <- extract(biovars_selection, long_lat_raw_unique, method='simple', df=T)
+
+values_spcoord_final_selection <- values_in_coord_selection[complete.cases(values_in_coord_selection), ]
+
+# Calcular novamente os indices de correlacao e niveis de significancia (data.frame)
+
+#### Aleatórios calcular a os indices de correlacao e niveis de significancia (data.frame)
+corrgram(values_rp_final_selection[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
+
+#### Pontos Raw calcular a os indices de correlacao e niveis de significancia (data.frame)
+corrgram(values_spcoord_final_selection[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
+
+######################################################################################################   
+
+#Performer same test via ggplot
+
+######################################################################################################  
 
 
 
-### Fazendo teste de signific?ncia- Visualizar a correl?o pontos/biovari?veis.
 
-corrplotall <- read.csv(file.choose(), sep=";", dec=",", header=TRUE)
 
-cor.mtest <- function(corrplotall, conf.level = 0.95) {
-  mat <- as.matrix(corrplotall)
-  n <- ncol(corrplotall)
-  p.mat <- lowCI.corrplotall <- uppCI.corrplotall <- matrix(NA, n, n)
+################################### Among All Variables ###############################################
+
+### Random Points. Significance test and visualize correlation points/variables.
+
+random_corrplota <- cor(values_final[,-1])
+corrplot(random_corrplota, method="circle", type = 'upper')
+View(random_corrplota)
+
+write.table(random_corrplota, file="random_corrplota.csv", quote=FALSE, sep=';', dec=",")
+
+## 
+
+cor.mtest <- function(random_corrplota, conf.level = 0.95) {
+  mat <- as.matrix(random_corrplota)
+  n <- ncol(random_corrplota)
+  p.mat <- lowCI.random_corrplota <- uppCI.random_corrplota <- matrix(NA, n, n)
   diag(p.mat) <- 0
-  diag(lowCI.corrplotall) <- diag(uppCI.corrplotall) <- 1
+  diag(lowCI.random_corrplota) <- diag(uppCI.random_corrplota) <- 1
   for (i in 1:(n - 1)) {
     for (j in (i + 1):n) {
-      tmp <- cor.test(corrplotall[, i], corrplotall[, j], conf.level = conf.level)
+      tmp <- cor.test(random_corrplota[, i], random_corrplota[, j], conf.level = conf.level)
       p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-      lowCI.corrplotall[i, j] <- lowCI.corrplotall[j, i] <- tmp$conf.int[1]
-      uppCI.corrplotall[i, j] <- uppCI.corrplotall[j, i] <- tmp$conf.int[2]
+      lowCI.random_corrplota[i, j] <- lowCI.random_corrplota[j, i] <- tmp$conf.int[1]
+      uppCI.random_corrplota[i, j] <- uppCI.random_corrplota[j, i] <- tmp$conf.int[2]
     }
   }
-  return(list(p.mat, lowCI.corrplotall, uppCI.corrplotall))
+  return(list(p.mat, lowCI.random_corrplota, uppCI.random_corrplota))
 }
 
-res1 <- cor.mtest(corrplotall, 0.95)
-res2 <- cor.mtest(corrplotall, 0.99)
+res1 <- cor.mtest(random_corrplota, 0.95)
+res2 <- cor.mtest(random_corrplota, 0.99)
 
-corrplot(corrplotall, p.mat = res1[[1]], sig.level = 0.05)
-corrplot(corrplotall, p.mat = res1[[1]], insig = "p-value")
-corrplot(corrplotall, p.mat = res1[[1]], insig = "p-value", sig.level = -1)
+corrplot(random_corrplota, p.mat = res1[[1]], sig.level = 0.05)
+corrplot(random_corrplota, p.mat = res1[[1]], insig = "p-value")
+corrplot(random_corrplota, p.mat = res1[[1]], insig = "p-value", sig.level = -1)
+
+
+
+### Species Points. Significance test and visualize correlation points/variables.
+
+sp_points_corrplota <- cor(values_incoord_final[,-1])
+corrplot(sp_points_corrplota, method="circle", type = 'upper')
+View(sp_points_corrplota)
+
+write.table(sp_points_corrplota, file="sp_points_corrplota.csv", quote=FALSE, sep=';', dec=",")
+
+##
+
+cor.mtest <- function(sp_points_corrplota, conf.level = 0.95) {
+  mat <- as.matrix(sp_points_corrplota)
+  n <- ncol(sp_points_corrplota)
+  p.mat <- lowCI.sp_points_corrplota <- uppCI.sp_points_corrplota <- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  diag(lowCI.sp_points_corrplota) <- diag(uppCI.sp_points_corrplota) <- 1
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(sp_points_corrplota[, i], sp_points_corrplota[, j], conf.level = conf.level)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+      lowCI.sp_points_corrplota[i, j] <- lowCI.sp_points_corrplota[j, i] <- tmp$conf.int[1]
+      uppCI.sp_points_corrplota[i, j] <- uppCI.sp_points_corrplota[j, i] <- tmp$conf.int[2]
+    }
+  }
+  return(list(p.mat, lowCI.sp_points_corrplota, uppCI.sp_points_corrplota))
+}
+
+res1 <- cor.mtest(sp_points_corrplota, 0.95)
+res2 <- cor.mtest(sp_points_corrplota, 0.99)
+
+corrplot(sp_points_corrplota, p.mat = res1[[1]], sig.level = 0.05)
+corrplot(sp_points_corrplota, p.mat = res1[[1]], insig = "p-value")
+corrplot(sp_points_corrplota, p.mat = res1[[1]], insig = "p-value", sig.level = -1)
+
+
+################################### Variables Selected ###############################################
+
+### Random Points. Significance test and visualize correlation points/variables.
+
+
+
+corplota_random_final <- cor(values_rp_final_selection[,-1])
+corrplot(corplota_random_final, method="circle", type = 'upper')
+View(corplota_random_final)
+
+write.table(corplota_random_final, file="cor2_random_corrplota.csv", quote=FALSE, sep=';', dec=",")
+
+##
+cor.mtest <- function(corplota_random_final, conf.level = 0.95) {
+  mat <- as.matrix(corplota_random_final)
+  n <- ncol(corplota_random_final)
+  p.mat <- lowCI.corplota_random_final <- uppCI.corplota_random_final <- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  diag(lowCI.corplota_random_final) <- diag(uppCI.corplota_random_final) <- 1
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(corplota_random_final[, i], corplota_random_final[, j], conf.level = conf.level)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+      lowCI.corplota_random_final[i, j] <- lowCI.corplota_random_final[j, i] <- tmp$conf.int[1]
+      uppCI.corplota_random_final[i, j] <- uppCI.corplota_random_final[j, i] <- tmp$conf.int[2]
+    }
+  }
+  return(list(p.mat, lowCI.corplota_random_final, uppCI.corplota_random_final))
+}
+
+res1 <- cor.mtest(corplota_random_final, 0.95)
+res2 <- cor.mtest(corplota_random_final, 0.99)
+
+corrplot(corplota_random_final, p.mat = res1[[1]], sig.level = 0.05)
+corrplot(corplota_random_final, p.mat = res1[[1]], insig = "p-value")
+corrplot(corplota_random_final, p.mat = res1[[1]], insig = "p-value", sig.level = -1)
+
+
+
+### Species Points. Significance test and visualize correlation points/variables.
+
+
+final_sppoints_corrplota <- cor(values_spcoord_final_selection[,-1])
+corrplot(final_sppoints_corrplota, method="circle", type = 'upper')
+View(final_sppoints_corrplota)
+
+write.table(final_sppoints_corrplota, file="final_sp_points_corrplota.csv", quote=FALSE, sep=';', dec=",")
+
+## 
+cor.mtest <- function(final_sppoints_corrplota, conf.level = 0.95) {
+  mat <- as.matrix(final_sppoints_corrplota)
+  n <- ncol(final_sppoints_corrplota)
+  p.mat <- lowCI.final_sppoints_corrplota <- uppCI.final_sppoints_corrplota <- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  diag(lowCI.final_sppoints_corrplota) <- diag(uppCI.final_sppoints_corrplota) <- 1
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(final_sppoints_corrplota[, i], final_sppoints_corrplota[, j], conf.level = conf.level)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+      lowCI.final_sppoints_corrplota[i, j] <- lowCI.final_sppoints_corrplota[j, i] <- tmp$conf.int[1]
+      uppCI.final_sppoints_corrplota[i, j] <- uppCI.final_sppoints_corrplota[j, i] <- tmp$conf.int[2]
+    }
+  }
+  return(list(p.mat, lowCI.final_sppoints_corrplota, uppCI.final_sppoints_corrplota))
+}
+
+res1 <- cor.mtest(final_sppoints_corrplota, 0.95)
+res2 <- cor.mtest(final_sppoints_corrplota, 0.99)
+
+corrplot(final_sppoints_corrplota, p.mat = res1[[1]], sig.level = 0.05)
+corrplot(final_sppoints_corrplota, p.mat = res1[[1]], insig = "p-value")
+corrplot(final_sppoints_corrplota, p.mat = res1[[1]], insig = "p-value", sig.level = -1)
+
