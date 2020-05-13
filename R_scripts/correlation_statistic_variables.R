@@ -12,17 +12,17 @@ library(rgdal)
 library(corrplot)
 library(corrgram)
 
-### Load, List, Stack Layers
+################################################# Load, List, Stack Layers ################################################# 
 dados <- list.files(path = "/home/taina/Documentos/Worldclim/Worldclim_Present_AF_version_2.1_&_Altitude_AF_INPE/", pattern = ".tif", full.names=TRUE)
 biovars <- stack(dados)
 plot(biovars)
 
-##### Pontos aleatórios 
-points <- spsample(as(biovars@extent, 'SpatialPolygons'), n=1000, type="random")    
+############################################## Sample Random Points ######################################################## 
+points <- spsample(as(biovars@extent, 'SpatialPolygons'), n=10000, type="random")    
 plot(biovars[[1]])
 plot(points,add=T)
 
-##### Pontos Planilha Original
+############################################## Load Species Points ######################################################## 
 
 pontos_raw <-read.csv("./data/c_melanocephala_nova.csv", sep = ",", dec = ".")
 
@@ -36,72 +36,77 @@ pontos_raw_unique <- pontos_raw[!dups.all, ]
 long_lat_raw_unique <- rev(pontos_raw_unique[nrow(pontos_raw_unique):1,])
 
 
-######################################## 
+######################################## Extrac Values ##################################################################### 
 
-#### Extrair Valores nos Pontos Aletórios
+### Extrair Valores nos Pontos Aletórios
 values <- raster::extract(biovars, points@coords, method='simple', df=T)
 
 values_final <- values[complete.cases(values), ]
 
-#### Extrair Valores nos Pontos Originais
+### Extrair Valores nos Pontos Originais
 
 values_in_coord <- extract(biovars, long_lat_raw_unique, method='simple', df=T)
 
 values_incoord_final <- values_in_coord[complete.cases(values_in_coord), ]
 
-### Gerando a tabela com as valores extraídos
+### Write Tables
 
-write.table(values_final, file="Random_points.csv", quote=FALSE, sep=',', dec=".")
+write.table(values_final, file="Random_points_1571.csv", quote=FALSE, sep=',', dec=".")
 
-write.table(values_incoord_final, file="spcies_points.csv", quote=FALSE, sep=',', dec=".")
-
-
-######################################## 
-
-#### Aleatórios calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values_final[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
-
-#### Pontos Raw calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values_incoord_final[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
+write.table(values_incoord_final, file="Species_points_377.csv", quote=FALSE, sep=',', dec=".")
 
 
-############################# testar script amanhã a partir daqui !!!!!!!!!!!!!!!!!!!!
+############################################## Building MAtrices Pearson Correlation ############################################ 
 
-# selecionar as variaveis (altitude, bio5, bio6, bio12, bio13, bio15)
+#### Random Points
+random_correlation_allVars <- corrgram(values_final[,-1], bg='blue', cex=2, pch=23, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
+
+#### Species Points
+species_correlation_allVars <-corrgram(values_incoord_final[,-1], bg='blue', cex=2, pch=23, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
+
+
+
+################################################### Select (altitude, bio5, bio6, bio12, bio13, bio15) #################################### 
 biovars_selection <- dropLayer(biovars, c('bio1', 'bio2', 'bio3', 'bio4',  'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio14', 'bio16', 'bio17', 'bio18', 'bio19'))
 biovars_selection
 plot(biovars_selection)
 
 
-# Extrair os valores de biovar_selection de cada ponto usado nos pontos aleatórios
+######################################## Extrac Values from selected variables ############################################################ 
+
+# Random Points
 
 values_randompoints_selection <- extract(biovars_selection, points@coords, df=T)
 
 values_rp_final_selection <- values_randompoints_selection[complete.cases(values_randompoints_selection), ]
 
 
-# Extrair os valores de biovar_selection de cada ponto usado 411 pontos da spceis
+# Species Points
 
 values_in_coord_selection <- extract(biovars_selection, long_lat_raw_unique, method='simple', df=T)
 
 values_spcoord_final_selection <- values_in_coord_selection[complete.cases(values_in_coord_selection), ]
 
-# Calcular novamente os indices de correlacao e niveis de significancia (data.frame)
+### Write Tables
 
-#### Aleatórios calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values_rp_final_selection[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
+write.table(values_rp_final_selection, file="Vars_Selection_Random_Points_1571.csv", quote=FALSE, sep=',', dec=".")
 
-#### Pontos Raw calcular a os indices de correlacao e niveis de significancia (data.frame)
-corrgram(values_spcoord_final_selection[,-1], bg='blue', cex=1, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
+write.table(values_spcoord_final_selection, file="Vars_Selection_Species_Points_377.csv", quote=FALSE, sep=',', dec=".")
+
+####################################### Building MAtrices Pearson Correlation for variables selected ############################### 
+
+#### Random Points
+
+corrgram(values_rp_final_selection[,-1], bg='blue', cex=3, pch=21, fig=TRUE, main = "Pearson Correlation ", lower.panel=panel.pts, upper.panel=panel.conf)
+
+#### Species Points
+corrgram(values_spcoord_final_selection[,-1], bg='blue', cex=3, pch=21, fig=TRUE, main = "Pearson Correlation 2", lower.panel=panel.pts, upper.panel=panel.conf)
 
 ######################################################################################################   
 
 #Performer same test via ggplot
 
 ######################################################################################################  
-
-
-
 
 
 ################################### Among All Variables ###############################################
@@ -181,13 +186,11 @@ corrplot(sp_points_corrplota, p.mat = res1[[1]], insig = "p-value", sig.level = 
 
 ### Random Points. Significance test and visualize correlation points/variables.
 
-
-
 corplota_random_final <- cor(values_rp_final_selection[,-1])
 corrplot(corplota_random_final, method="circle", type = 'upper')
 View(corplota_random_final)
 
-write.table(corplota_random_final, file="cor2_random_corrplota.csv", quote=FALSE, sep=';', dec=",")
+write.table(corplota_random_final, file="Random_Vars_Selected_Corrplot.csv", quote=FALSE, sep=';', dec=",")
 
 ##
 cor.mtest <- function(corplota_random_final, conf.level = 0.95) {
@@ -223,7 +226,7 @@ final_sppoints_corrplota <- cor(values_spcoord_final_selection[,-1])
 corrplot(final_sppoints_corrplota, method="circle", type = 'upper')
 View(final_sppoints_corrplota)
 
-write.table(final_sppoints_corrplota, file="final_sp_points_corrplota.csv", quote=FALSE, sep=';', dec=",")
+write.table(final_sppoints_corrplota, file="SP_Vars_Selected_Corrplot.csv", quote=FALSE, sep=';', dec=",")
 
 ## 
 cor.mtest <- function(final_sppoints_corrplota, conf.level = 0.95) {
