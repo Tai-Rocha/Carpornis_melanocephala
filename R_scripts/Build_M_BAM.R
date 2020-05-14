@@ -13,7 +13,7 @@ library(maptools)
 
 ### Read and load Atlantic Forest Shape and altitude raster
 
-af_shape <- readOGR("./data/shape_masc/mata_atlantica11428.shp")
+af_shape <- readOGR("./data/shapes/mata_atlantica11428.shp")
 plot(af_shape)
 
 altitude_brasil <- raster("./data/layers/raw_layers/altitude_inpe_br.asc")
@@ -26,19 +26,18 @@ plot(af_masked)
 af_extention <- crop(x = af_masked, y = extent(af_shape))
 plot(af_extention)
 
-writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
-
+#writeRaster(af_extention, "./data/layers/cropped_layers/af_cropped_alt.tif")
 
 ### Defining BAM M Area i.e Area <= 800.000 altitude
 
-bamMtif <- af_extention<800.000
+bamMtif <- af_extention<1228
 bamMtif[bamMtif == 0] <- NA
 plot(bamMtif)
 
 BAM_M_MASKED <- mask(af_extention, mask = bamMtif)
 plot(BAM_M_MASKED)
 
-writeRaster(BAM_M_MASKED, "./data/layers/cropped_layers/bamMsabiaPimenta.tif")
+writeRaster(BAM_M_MASKED, "./data/layers/cropped_layers/Final_bamMsabiaPimenta.tif")
 
 ### Convert M BAM raster to shape 
 ### Set function (beacuse raster function to do this take a long time (more than 7 hours)!!! Here take 1 minute or less)
