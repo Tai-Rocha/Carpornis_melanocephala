@@ -14,7 +14,7 @@ library(rgdal)
 
 ## Read and load georreferenced data
 
-sabiapimenta_records <- read.csv("./data/c_melanocephala.csv", sep = ",", dec = ".")
+sabiapimenta_records <- read.csv("./data/c_melanocephala_nova.csv", sep = ",", dec = ".")
 
 
 ### Bioclimatic variables from worldclim List and stack rescpectively
@@ -28,26 +28,19 @@ predictors <- stack(predictor_sabiapimenta)
 plot(predictors)
 
 
-## Read and load the pseudoabsence shapefile where pseudoabsence will be generated 
-
-sabiapimenta_pa_area <- readOGR("./data/shapes/PabsenceArea_shape_sabiaPimenta.shp")
-plot(sabiapimenta_pa_area)
-
 ###
+
 sdmdata_sabiapimenta <- setup_sdmdata(species_name= unique(sabiapimenta_records$sp),
                              occurrences = sabiapimenta_records[,-1],
-                             lon = "lon",
+                             lon = "long",
                              lat = "lat",
                              predictors = predictors,
-                             models_dir = "./results",
+                             models_dir = "./results_bioclim_PA",
                              partition_type = "crossvalidation",
                              cv_partitions = 5,
                              cv_n = 10,
                              seed = 512,
-                             buffer_type = "user",
-                             buffer_shape = sabiapimenta_pa_area,
                              png_sdmdata = TRUE,
-                             n_back = 1000,
                              clean_dupl = TRUE,
                              clean_uni = TRUE,
                              clean_nas = TRUE)
@@ -55,18 +48,20 @@ sdmdata_sabiapimenta <- setup_sdmdata(species_name= unique(sabiapimenta_records$
 ###### Do any
 
 sabia_pimenta_bioclim <- do_any(species_name = unique(sabiapimenta_records$sp),
-          algorithm = "bioclim",
-          predictors = predictors,
-          models_dir = "./results",
-          png_partitions = TRUE,
-          write_bin_cut = FALSE,
-          equalize = TRUE)
+                                predictors = predictors,
+                                models_dir = "./results_bioclim_PA",
+                                algorithm = c("bioclim"),
+                                dismo_threshold = "sensitivity",
+                                project_model = FALSE,
+                                write_bin_cut = FALSE,
+                                sensitivity = 0.9,
+                                proc_threshold =  0.5)
 
 ###### Final Model - 
 
-final_model(species_name = unique(sabiapimenta_records$sp),
+final_model_sabia_pimenta <- final_model(species_name = unique(sabiapimenta_records$sp),
             algorithms = NULL, #if null it will take all the algorithms in disk
-            models_dir = "./results",
+            models_dir = "./results_bioclim_PA",
             which_models = c("raw_mean",
                              "bin_mean",
                              "bin_consensus"),
