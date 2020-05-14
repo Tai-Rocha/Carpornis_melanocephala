@@ -15,14 +15,14 @@ library(corrgram)
 ##################################### BAM
 
 
-sabiapimenra_bamM <-r("")
+sabiapimenra_bamM <-raster("./data/layers/cropped_layers/bamMsabiaPimenta.tif")
 plot(sabiapimenra_bamM)
 
 
-############################################## Sample Random Points ######################################################## 
-points <- spsample(sabiapimenra_bamM, 'SpatialPolygons'), n=10000, type="random")
+############################################## Sample Random Points ############################################ 
+points <- spsample(as(sabiapimenra_bamM, 'SpatialPolygons'), n=1000, type="random")
 plot(sabiapimenra_bamM[[1]])
-plot(sabiapimenra_bamM,add=T)
+plot(points,add=T)
 
 ##################################### Worlclim Load, List, Stack Layers ###################################### 
 
@@ -30,9 +30,10 @@ dados <- list.files(path = "/home/taina/Documentos/Worldclim/Worldclim_Present_A
 biovars <- stack(dados)
 plot(biovars)
 
-######################################## Extrac Values ##################################################################### 
+######################################## Extrac Values ######################################################## 
 
 ### Extrair Valores nos Pontos Aletórios
+
 values <- raster::extract(biovars, points@coords, method='simple', df=T)
 
 values_final <- values[complete.cases(values), ]
@@ -40,11 +41,12 @@ values_final <- values[complete.cases(values), ]
 
 ### Write Tables
 
-write.table(values_final, file="Random_points_1571.csv", quote=FALSE, sep=',', dec=".")
+write.table(values_final, file="Random_points.csv", quote=FALSE, sep=',', dec=".")
 
-############################################## Building MAtrices Pearson Correlation ############################################ 
+###################################### Building MAtrices Pearson Correlation ################################## 
 
 #### Random Points
+
 random_correlation_allVars <- corrgram(values_final[,-1], bg='blue', cex=2, pch=23, fig=TRUE, main = "Pearson Correlation", lower.panel=panel.pts, upper.panel=panel.conf)
 
 
@@ -62,12 +64,9 @@ values_randompoints_selection <- extract(biovars_selection, points@coords, df=T)
 
 values_rp_final_selection <- values_randompoints_selection[complete.cases(values_randompoints_selection), ]
 
-
-
-
 ### Write Tables
 
-write.table(values_rp_final_selection, file="Vars_Selection_Random_Points_1571.csv", quote=FALSE, sep=',', dec=".")
+write.table(values_rp_final_selection, file="Vars_Selection_Random_Points.csv", quote=FALSE, sep=',', dec=".")
 
 
 
