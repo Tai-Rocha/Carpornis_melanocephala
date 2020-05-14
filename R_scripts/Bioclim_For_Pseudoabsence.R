@@ -10,7 +10,6 @@
 
 library(modleR)
 library(raster)
-library(rgdal)
 
 ## Read and load georreferenced data
 
@@ -20,8 +19,8 @@ sabiapimenta_records <- read.csv("./data/c_melanocephala_nova.csv", sep = ",", d
 ### Bioclimatic variables from worldclim List and stack rescpectively
 
 predictor_sabiapimenta <- list.files(path = './data/layers/current/',
-                        pattern = 'tif',
-                        full.names = T)
+                                     pattern = 'tif',
+                                     full.names = T)
 
 predictors <- stack(predictor_sabiapimenta)
 
