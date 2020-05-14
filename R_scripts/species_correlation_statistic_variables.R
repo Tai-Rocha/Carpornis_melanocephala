@@ -12,11 +12,6 @@ library(rgdal)
 library(corrplot)
 library(corrgram)
 
-##################################### BAM
-
-
-sabiapimenra_bamM <-r("")
-plot(sabiapimenra_bamM)
 
 ############################################## Load Species Points ######################################################## 
 
@@ -42,7 +37,7 @@ plot(biovars)
 
 ### Extrair Valores nos Pontos Originais
 
-values_in_coord <- extract(biovars, long_lat_raw_unique, method='simple', df=T)
+values_in_coord <- extract(biovars, long_lat_raw_unique[,-3], method='simple', df=T)
 
 values_incoord_final <- values_in_coord[complete.cases(values_in_coord), ]
 
@@ -68,7 +63,7 @@ plot(biovars_selection)
 
 # Species Points
 
-values_in_coord_selection <- extract(biovars_selection, long_lat_raw_unique, method='simple', df=T)
+values_in_coord_selection <- extract(biovars_selection, long_lat_raw_unique[,-3], method='simple', df=T)
 
 values_spcoord_final_selection <- values_in_coord_selection[complete.cases(values_in_coord_selection), ]
 
