@@ -67,7 +67,11 @@ plot(altitude)
 long_lat <- rev(pontos[nrow(pontos):1,])
 
 # Extract values from point
-alt_values_coord <- extract(altitude, long_lat, method='simple', df=T)
+alt_values_coord <- extract(altitude, long_lat[,-3], method='simple', df=T)
+
+alt_values_coord[complete.cases(alt_values_coord), ]
+
+summary(alt_values_coord)
 
 ## Write a table
 
