@@ -1,5 +1,6 @@
 ########################################################################
 ## Ecological Niche Model Analysis for Carpornis melanocephala
+## Using 4 Variables
 ## Author : Tainá Rocha
 ## Date: 13 May 2020
 ########################################################################
