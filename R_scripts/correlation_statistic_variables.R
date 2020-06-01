@@ -30,6 +30,7 @@ dados <- list.files(path = "/home/taina/Documentos/Worldclim/Worldclim_Present_A
 biovars <- stack(dados)
 plot(biovars)
 
+
 ######################################## Extrac Values ######################################################## 
 
 ### Extrair Valores nos Pontos Aletórios
