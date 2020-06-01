@@ -30,5 +30,5 @@ models_algorithms <- do_many (
                              proc_threshold= 5,
                              equalize = TRUE,
                              project_model = T,
-                             proj_data_folder= "./data/layers/current_4vars",
+                             proj_data_folder= "./data/layers/",
                              png_partitions= FALSE)
