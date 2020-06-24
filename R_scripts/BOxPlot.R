@@ -16,7 +16,7 @@ rm(KAPPA)
 
 AUC <- read.csv(file.choose(), header=T)
 
-AUC <- ggplot(AUC_Table, aes(x = Algorithm, y = AUC)) +
+AUC <- ggplot(AUC, aes(x = Algorithm, y = AUC)) +
   
   geom_boxplot()
 
@@ -27,6 +27,21 @@ AUC <- AUC + scale_y_continuous(name = "AUC", breaks=seq(0,1), limits=c(0,1))
 AUC
 
 ###########################################################
+
+
+#(1) Basic boxplot
+
+PROCc <- read.csv(file.choose(), header=T)
+
+PROCc <- ggplot(PROCc, aes(x = Algorithm, y = pROC)) +
+  
+  geom_boxplot()
+
+PROCc
+
+PROCc <- PROCc + scale_y_continuous(name = "pROC", breaks=seq(0,2), limits=c(0,1.5))
+
+PROCc
 
 #(1) Basic boxplot
 
