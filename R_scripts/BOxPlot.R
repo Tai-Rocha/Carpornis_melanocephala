@@ -12,7 +12,7 @@ library(ggplot2)
 rm(KAPPA) 
 
 
-#(1) Basic boxplot
+#(1) Basic boxplot AUC
 
 AUC <- read.csv(file.choose(), header=T)
 
@@ -29,7 +29,7 @@ AUC
 ###########################################################
 
 
-#(1) Basic boxplot
+#(1) Basic boxplot pROC
 
 PROCc <- read.csv(file.choose(), header=T)
 
@@ -42,12 +42,26 @@ PROCc
 PROCc <- PROCc + scale_y_continuous(name = "pROC", breaks=seq(0,2), limits=c(0,1.5))
 
 PROCc
+#(1) Basic boxplot KAPPA
 
-#(1) Basic boxplot
+KAPPA <- read.csv(file.choose(), header=T)
+
+KAPPA <- ggplot(KAPPA, aes(x = Algorithm, y = KAPPA)) +
+  
+  geom_boxplot()
+
+KAPPA
+
+KAPPA <- KAPPA + scale_y_continuous(name = "KAPPA", breaks=seq(0,1), limits=c(0,1))
+
+KAPPA
+
+
+#(1) Basic boxplot TSS
 
 TSS <- read.csv(file.choose(), header=T)
 
-TSS <- ggplot(TSS, aes(x = Algorithms, y = TSS)) +
+TSS <- ggplot(TSS, aes(x = Algorithm, y = TSS)) +
   
   geom_boxplot()
 
