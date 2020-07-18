@@ -8,13 +8,13 @@ Script folders was divided subfolder as follow:
 
 Exploratory analysis : to study the georeferenced data in all climatic variables which we use in this study (http://www.worldclim.com/version2 in 30 seconds resolution (~1 km²))
 
-Pearson_Correlation: to verify the pairwise variables correlation
+Pearson_Correlation: to verify the pairwise variables correlation and after choose variables less autocorrelated.
 
 Data cleaning: filters to applie on records dataset in order to reduce sample bias (reduce spatial correlation). Here, we use setupsdma_data funtion of modleR package (https://model-r.github.io/modleR/)
 
-Crop_M_BAM_Area: Crop M BAM area  (see  Barve et al 2011, https://www.researchgate.net/publication/230691635_The_crucial_role_of_the_accessible_area_in_ecological_niche_modeling_and_species_distribution_modeling )
+Crop_M_BAM_Area: select and crop movement (M) area  (see  Barve et al 2011, https://www.researchgate.net/publication/230691635_The_crucial_role_of_the_accessible_area_in_ecological_niche_modeling_and_species_distribution_modeling )
 
-Bioclim_for_PA: We run a BIOCLIM algorithm to select pseudoabsence area
+Bioclim_for_PA: We run a BIOCLIM algorithm to select pseudoabsence area  i.e, low suitability area to generate pseudoabsen points.
 
 ENMs: workflow based on modleR to performing ecological niche momodleR package to performing ecological niche model.
 We have two subfolder 1- for models based on 4 climatic vriables  and 2- for models based on 6 climatic variables.
