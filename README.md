@@ -1,6 +1,6 @@
 ## This is a scripts repository of ecological niche models (ENMs) analysis for Carpornis melanocephala (Passeriformes: Cotingidae) in Rio de Janeiro State,Brazil.
-### Author scripts: Tainá Rocha
-### Here we use ENMs to map suitability climatic condition for Black-headed berryeater (*C.melanocephala*) in Rio de Janeiro state. Our goal it's find new  populations in future fieldwork.
+#### Author scripts: Tainá Rocha
+#### Here we use ENMs to map suitability climatic condition for Black-headed berryeater (*C.melanocephala*) in Rio de Janeiro state. Our goal it's find new  populations in future fieldwork.
 
 
 ##### Script folders was divided in subfolder as follow:
