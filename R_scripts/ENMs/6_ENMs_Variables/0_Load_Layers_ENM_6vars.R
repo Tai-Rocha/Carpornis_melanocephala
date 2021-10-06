@@ -12,7 +12,7 @@ library(rgeos)
 
 ## Read and load georreferenced data
 
-sp_records <- read.csv("./data/c_melanocephala_nova.csv", sep = ",", dec = ".")
+sp_records <- read.csv("./data/records/c_melanocephala_551.csv", sep = ",", dec = ".")
 
 ## Atlatic Forest Shape For Cropp Variables Project
 
