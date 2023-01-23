@@ -28,3 +28,5 @@
  
     - Boxplots of variables in record database 
     - Boxplot of models evaluation metrics
+
+- [x] Models post-processing: Select only suitable climate where are forests (according to [MapBiomas collection 4](https://mapbiomas.org/colecao-4))
